@@ -1,10 +1,10 @@
-package database
+package db
 
 import (
 	"database/sql"
 	"fmt"
 
-	"github.com/nouzun/l2r/pkg/model"
+	"github.com/nouzun/l2r/model"
 )
 
 type Database struct {

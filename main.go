@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/nouzun/l2r/db"
+	db "github.com/nouzun/l2r/pkg/database"
 )
 
 func homePage(w http.ResponseWriter, r *http.Request) {
