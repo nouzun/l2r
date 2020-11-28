@@ -1,10 +1,12 @@
-package db
+package database
 
 import (
 	"database/sql"
 	"fmt"
 
-	"github.com/nouzun/l2r/model"
+	"github.com/nouzun/l2r/pkg/model"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type Database struct {
@@ -26,22 +28,28 @@ func ConnectDatabase() (*Database, error) {
 	return &Database{database: db}, nil
 }
 
-func (db *Database) GetWords() error {
+func (db *Database) GetWords() ([]model.Word, error) {
 	// Execute the query
-	results, err := db.database.Query("SELECT id, word, gender, plural, type, sentence, case FROM words")
+	results, err := db.database.Query("SELECT id, word, gender, plural, word_type, sentence, word_case FROM words")
 	if err != nil {
+		db.database.Close()
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
+
+	var words []model.Word
 
 	for results.Next() {
 		var word model.Word
 
 		// for each row, scan the result into our tag composite object
-		err = results.Scan(&word.ID, &word.Word, &word.Gender)
+		err = results.Scan(&word.ID, &word.Word, &word.Gender, &word.Plural, &word.Type, &word.Sentence, &word.Case)
 		if err != nil {
+			db.database.Close()
 			panic(err.Error()) // proper error handling instead of panic in your app
 		}
+
+		words = append(words, word)
 	}
 
-	return nil
+	return words, nil
 }
